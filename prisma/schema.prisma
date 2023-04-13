@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model key {
+  id              String  @id @unique
+  hashed_password String?
+  user_id         String
+  primary         Boolean
+  expires         String?
+  user            user    @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@map("key")
+}
+
+model session {
+  id             String @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  user           user   @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@map("session")
+}
+
+model user {
+  id       String        @id @unique
+  nama     String        @db.VarChar(100)
+  foto     String?
+  username String        @unique @db.VarChar(100)
+  wa       String?        @db.VarChar(20)
+  level    user_level    @default(SISWA)
+  np       String?       @db.VarChar(10)
+  nis      String?       @db.VarChar(10)
+  kelas    user_kelas?
+  jurusan  user_jurusan?
+  key      key[]
+  session  session[]
+
+  @@map("user")
+}
+
+enum user_kelas {
+  X
+  XI
+  XII
+}
+
+enum user_level {
+  SISWA
+  PETUGAS
+  ADMIN
+}
+
+enum user_jurusan {
+  RPL
+  TKJ
+  TJA
+  TEL
+  DBK
+}
