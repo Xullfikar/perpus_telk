@@ -1,5 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
+	import myImage from './notImage.png';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import DarkMode from 'flowbite-svelte/DarkMode.svelte';
@@ -17,6 +18,7 @@
 	import DropdownHeader from 'flowbite-svelte/DropdownHeader.svelte';
 	import DropdownItem from 'flowbite-svelte/DropdownItem.svelte';
 	import DropdownDivider from 'flowbite-svelte/DropdownDivider.svelte';
+	import Button from 'flowbite-svelte/Button.svelte';
 	import { sineIn } from 'svelte/easing';
 
 	let transitionParams = {
@@ -54,14 +56,24 @@
 	const toggleDrawer = () => {
 		drawerHidden = false;
 	};
-	$: activeUrl = $page.url.pathname;
+
+	$: Url = $page.url.pathname;
+	$: Urls = Url.split('/');
+	$: activeUrl = Urls[1];
+
 	let darkmodebtn =
-		'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-lg p-2.5 fixed right-2 top-12  md:top-3 md:right-2 z-50';
+		'text-gray-500 bg-gray-100 dark:bg-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg text-lg px-2 py-2 ml-2 -mt-2';
+
+	import type { LayoutData } from './$types.js';
+	export let data: LayoutData;
+
+	// @ts-ignore
+	$: ({ userDetail } = data);
 </script>
 
 <svelte:window bind:innerWidth={width} />
 
-{#if activeUrl === '/login'}
+{#if activeUrl === 'login'}
 	<slot />
 {:else}
 	<Navbar let:hidden let:toggle color="primary">
@@ -71,24 +83,34 @@
 				Perpus-Telk
 			</span>
 		</NavBrand>
-		<div class="flex items-center md:order-2">
-			<Avatar
-				id="avatar-menu"
-				src="https://bestprofilepictures.com/wp-content/uploads/2021/04/Cool-Profile-Picture.jpg"
-			/>
-		</div>
-		<Dropdown placement="bottom" triggeredBy="#avatar-menu">
-			<DropdownHeader>
-				<span class="block text-sm"> Nama Lengkap </span>
-				<span class="block text-sm"> Kelas </span>
-				<span class="block truncate text-sm font-medium"> NIP/NIS </span>
-			</DropdownHeader>
-			<DropdownItem>Dashboard</DropdownItem>
+		<Button pill color="light" id="avatar_with_name" class="!p-1">
+			{#if !userDetail.foto}
+				<Avatar src={myImage} class="mr-2" />
+			{:else}
+				<Avatar src={userDetail.foto} class="mr-2" />
+			{/if}
+			{userDetail.nama}
+		</Button>
+		<Dropdown inline triggeredBy="#avatar_with_name">
+			<div slot="header" class="px-4 py-2">
+				<span class="block text-sm text-gray-900 dark:text-white"> {userDetail.nama} </span>
+				{#if userDetail.level === 'SISWA'}
+					<span class="block text-sm text-gray-900 dark:text-white"> {userDetail.kelas} </span>
+					<span class="block truncate text-sm font-medium"> {userDetail.nis} </span>
+				{:else if userDetail.level === 'PETUGAS'}
+					<span class="block truncate text-sm font-medium"> {userDetail.np} </span>
+				{/if}
+			</div>
+			<DropdownItem href="/">Dashboard</DropdownItem>
+			<DropdownItem defaultClass="font-medium py-2 px-4 text-sm"
+				>Mode<DarkMode btnClass={darkmodebtn} /></DropdownItem
+			>
 			<DropdownDivider />
-			<DropdownItem>Logout</DropdownItem>
+			<form action="/logout" method="post">
+				<DropdownItem type="submit">Keluar</DropdownItem>
+			</form>
 		</Dropdown>
 	</Navbar>
-	<DarkMode btnClass={darkmodebtn} />
 	<Drawer
 		transitionType="fly"
 		{backdrop}
@@ -111,7 +133,7 @@
 						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						on:click={toggleSide}
-						active={activeUrl === `/`}
+						active={activeUrl === ``}
 					>
 						<svelte:fragment slot="icon">
 							<svg
@@ -136,7 +158,7 @@
 						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						on:click={toggleSide}
-						active={activeUrl === `/users`}
+						active={activeUrl === `users`}
 					>
 						<svelte:fragment slot="icon">
 							<svg
@@ -161,7 +183,7 @@
 						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						on:click={toggleSide}
-						active={activeUrl === `/acc`}
+						active={activeUrl === `acc`}
 					>
 						<svelte:fragment slot="icon">
 							<svg
@@ -188,7 +210,7 @@
 						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						on:click={toggleSide}
-						active={activeUrl === `/report`}
+						active={activeUrl === `report`}
 					>
 						<svelte:fragment slot="icon">
 							<svg
@@ -212,7 +234,6 @@
 						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						on:click={toggleSide}
-						active={activeUrl === `/logout`}
 					>
 						<svelte:fragment slot="icon">
 							<svg

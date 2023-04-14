@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Fileupload } from 'flowbite-svelte';
+	import { Fileupload, BreadcrumbItem } from 'flowbite-svelte';
 
 	import Helper from 'flowbite-svelte/Helper.svelte';
 	import Select from 'flowbite-svelte/Select.svelte';
@@ -9,7 +9,7 @@
 	import Input from 'flowbite-svelte/Input.svelte';
 	import Label from 'flowbite-svelte/Label.svelte';
 	import Alert from 'flowbite-svelte/Alert.svelte';
-
+	import Breadcrumb from 'flowbite-svelte/Breadcrumb.svelte';
 	let slevel = '';
 	let skelas: any;
 	let sjurusan: any;
@@ -59,13 +59,36 @@
 	};
 </script>
 
+<Breadcrumb class="mb-4 mt-4">
+	<BreadcrumbItem href="/users" home>
+		<svelte:fragment slot="icon">
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				fill="none"
+				viewBox="0 0 24 24"
+				stroke-width="1.5"
+				stroke="currentColor"
+				class="w-4 h-4 mr-2"
+			>
+				<path
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+				/>
+			</svg>
+		</svelte:fragment>
+		Users
+	</BreadcrumbItem>
+	<BreadcrumbItem>Tambah Pengguna</BreadcrumbItem>
+	<!-- <BreadcrumbItem href="/">Settings</BreadcrumbItem> -->
+</Breadcrumb>
+
+<p class="text-xl md:text-3xl font-semibold dark:text-white mb-4">Tambah Pengguna</p>
+
 <form action="" method="post">
 	<div
-		class="container mx-auto w-full sm:w-11/12 mt-20 bg-red-50 dark:bg-red-300 p-5 rounded-3xl grid grid-cols-2 gap-4"
+		class="container mx-auto w-full bg-red-50 dark:bg-red-300 p-5 rounded-3xl grid grid-cols-2 gap-4 mb-8"
 	>
-		<div class="mb-3 col-span-2">
-			<p class="text-xl font-bold text-red-800 dark:text-red-800 text-center">Tambah User</p>
-		</div>
 		<div class="col-span-2">
 			{#if files}
 				{#if Number(files[0].size) / 1024 > 300}
@@ -274,17 +297,11 @@
 			{/if}
 		</div>
 
-		<div class="mb-3">
+		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label for="nama" class="block mb-2 text-red-800 dark:text-red-800">Nama</Label>
-			<Input
-				id="nama"
-				name="nama"
-				value={form?.nama}
-				placeholder="Masukkan Nama Lengkap"
-				on:input={resolved()}
-			/>
+			<Input id="nama" name="nama" value={form?.nama} placeholder="Masukkan Nama Lengkap" />
 		</div>
-		<div class="mb-3">
+		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label for="telepon/wa" class="block mb-2 text-red-800 dark:text-red-800"
 				>No. Telepon / WA</Label
 			>
@@ -297,7 +314,7 @@
 			/>
 			<Helper class="text-sm mt-2 text-red-800 dark:text-red-800">Tidak Wajib Diisi*</Helper>
 		</div>
-		<div class="mb-3">
+		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label class="pb-2 text-red-800 dark:text-red-800">Upload Foto</Label>
 			<Fileupload
 				name="image"
@@ -311,7 +328,7 @@
 				>Tidak Wajib Diisi, Max 300kb*</Helper
 			>
 		</div>
-		<div class="mb-3">
+		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label defaultClass="text-w-semibold text-red-800 dark:text-red-800"
 				>Pilih Role
 				<Select
@@ -357,7 +374,7 @@
 				/>
 			</ButtonGroup>
 		</div>
-		<div class="mb-3">
+		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label for="website-admin" class="block mb-2 text-red-800 dark:text-red-800">Password</Label>
 			<ButtonGroup class="w-full">
 				<InputAddon>
@@ -383,7 +400,7 @@
 				/>
 			</ButtonGroup>
 		</div>
-		<div class="mb-3">
+		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label for="website-admin" class="block mb-2 text-red-800 dark:text-red-800"
 				>Konfirmasi Password</Label
 			>
@@ -421,7 +438,7 @@
 				<Label for="nis" class="block mb-2 text-red-800 dark:text-red-800">NIS</Label>
 				<Input id="nis" name="nis" value={form?.nis} placeholder="Masukkan Nomor Induk Siswa" />
 			</div>
-			<div class="mb-3">
+			<div class="mb-3 col-span-2 md:col-span-1">
 				<Label defaultClass="text-w-semibold text-red-800 dark:text-red-800"
 					>Pilih Kelas
 					<Select
@@ -432,7 +449,7 @@
 					/>
 				</Label>
 			</div>
-			<div class="mb-3">
+			<div class="mb-3 col-span-2 md:col-span-1">
 				<Label defaultClass="text-w-semibold text-red-800 dark:text-red-800"
 					>Pilih Jurusan
 					<Select
