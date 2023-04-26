@@ -50,7 +50,7 @@
 	export let form: ActionData;
 	// @ts-ignore
 	$: ({ categories, userDetail, stokUsed } = data);
-	
+
 	// Search Fitur
 	// @ts-ignore
 	const searchBook = data.books.map((book: any) => ({
@@ -138,7 +138,6 @@
 
 	onMount(() => {
 		loadKategori();
-
 	});
 
 	let muncul = false;
@@ -148,8 +147,10 @@
 	};
 
 	function lengthUsed(stok: number, id: any) {
-		const stokUseds = stokUsed.map(item => Object.values(item)).reduce((acc, val) => acc.concat(val), []);
-		const hasil = stokUseds.filter(item => item === id).length;
+		const stokUseds = stokUsed
+			.map((item) => Object.values(item))
+			.reduce((acc, val) => acc.concat(val), []);
+		const hasil = stokUseds.filter((item) => item === id).length;
 		const tersedia = stok - hasil;
 		return tersedia;
 	}
@@ -296,7 +297,9 @@
 						<Badge large color="red"><h2>Kosong</h2></Badge>
 					{:else}
 						<Badge large color="green"
-							><h2 class="">Tersedia: <span class="font-semibold"> {lengthUsed(book.stok, book.id)}</span></h2>
+							><h2 class="">
+								Tersedia: <span class="font-semibold"> {lengthUsed(book.stok, book.id)}</span>
+							</h2>
 						</Badge>
 					{/if}
 					<h6 class="mt-2 font-light italic text-sm text-gray-700 dark:text-gray-400 leading-tight">

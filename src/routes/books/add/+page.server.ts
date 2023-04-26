@@ -1,5 +1,5 @@
-import { redirect, fail } from "@sveltejs/kit";
-import type { Actions, PageServerLoad } from "./$types.js";
+import { redirect, fail } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types.js';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const session = await locals.validate();
@@ -10,7 +10,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	try {
 		return {
 			categories: await prisma.category.findMany()
-		}
+		};
 	} catch (error) {
 		console.error(error);
 	}
@@ -18,20 +18,30 @@ export const load: PageServerLoad = async ({ locals }) => {
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		let { judulBuku, gambar, penerbit, penulis, stok, sinopsis, tahunTerbit, isbn, jumlahHalaman, lokasi, idKategori } = Object.fromEntries(
-			await request.formData()
-		) as unknown as {
-			judulBuku: string,
-			gambar: string,
-			penulis: string,
-			penerbit: string,
-			tahunTerbit: Date,
-			isbn: number,
-			jumlahHalaman: number,
-			stok: number,
-			idKategori: number,
-			lokasi: string,
-			sinopsis: string,
+		let {
+			judulBuku,
+			gambar,
+			penerbit,
+			penulis,
+			stok,
+			sinopsis,
+			tahunTerbit,
+			isbn,
+			jumlahHalaman,
+			lokasi,
+			idKategori
+		} = Object.fromEntries(await request.formData()) as unknown as {
+			judulBuku: string;
+			gambar: string;
+			penulis: string;
+			penerbit: string;
+			tahunTerbit: Date;
+			isbn: number;
+			jumlahHalaman: number;
+			stok: number;
+			idKategori: number;
+			lokasi: string;
+			sinopsis: string;
 		};
 
 		let masalah = {
@@ -54,7 +64,7 @@ export const actions: Actions = {
 			missingjumlahHalaman: false,
 			missingSinopsis: false,
 			missingLokasi: false,
-			missingIdKategori: false,
+			missingIdKategori: false
 		};
 
 		if (!judulBuku) {
@@ -93,8 +103,18 @@ export const actions: Actions = {
 			masalah.missingIdKategori = true;
 		}
 
-		if (!judulBuku || !penerbit || !penulis || !stok || !tahunTerbit || !isbn || !jumlahHalaman || !lokasi || !idKategori) {
-			return fail(400, masalah)
+		if (
+			!judulBuku ||
+			!penerbit ||
+			!penulis ||
+			!stok ||
+			!tahunTerbit ||
+			!isbn ||
+			!jumlahHalaman ||
+			!lokasi ||
+			!idKategori
+		) {
+			return fail(400, masalah);
 		}
 
 		stok = Number(stok);
@@ -118,12 +138,11 @@ export const actions: Actions = {
 					lokasi,
 					idKategori
 				}
-			})
+			});
 		} catch (error) {
 			console.log(error);
-			return fail(500, { message: "Terjadi kesalahan saat menambah buku" })
+			return fail(500, { message: 'Terjadi kesalahan saat menambah buku' });
 		}
 		return { success: true };
 	}
 };
-

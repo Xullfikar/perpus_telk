@@ -11,80 +11,88 @@ export const load: PageServerLoad = async ({ locals }) => {
 };
 
 export const actions: Actions = {
-    default: async ({ request }) => {
-        const { nama, foto, username, password, kpassword, wa, level, np, nis, kelas, jurusan } = Object.fromEntries(
-			await request.formData()
-		) as Record<string, string>;
+	default: async ({ request }) => {
+		const { nama, foto, username, password, kpassword, wa, level, np, nis, kelas, jurusan } =
+			Object.fromEntries(await request.formData()) as Record<string, string>;
 
 		let masalah = {
-			nama, 
-			username, 
-			password, 
-			kpassword, 
-			wa, 
-			level, 
-			np, 
-			nis, 
-			kelas, 
-			jurusan,
-		}
+			nama,
+			username,
+			password,
+			kpassword,
+			wa,
+			level,
+			np,
+			nis,
+			kelas,
+			jurusan
+		};
 
 		if (!nama) {
 			masalah.missingNama = true;
 		}
 
 		if (!username) {
-			masalah.missingUsername = true;		
+			masalah.missingUsername = true;
 		}
 
 		if (!level) {
-			masalah.missingLevel = true;		
+			masalah.missingLevel = true;
 		}
 
 		const usernameCheck = await prisma.user.findUnique({
-            where: {
-                username: username
-            }
-        });
+			where: {
+				username: username
+			}
+		});
 
-		if(usernameCheck) {
-			masalah.usernameReady = true;		
-        }
+		if (usernameCheck) {
+			masalah.usernameReady = true;
+		}
 
-		if(password != kpassword) {
-			masalah.incorrect = true;		
-        }
+		if (password != kpassword) {
+			masalah.incorrect = true;
+		}
 
-		if (level === "PETUGAS") {
+		if (level === 'PETUGAS') {
 			if (!np) {
-				masalah.missingNp = true;		
+				masalah.missingNp = true;
 			}
 
-			if (!nama || !username || !level || !np || usernameCheck || password != kpassword) {		
-				return fail(400, masalah)
+			if (!nama || !username || !level || !np || usernameCheck || password != kpassword) {
+				return fail(400, masalah);
 			}
-		} else if (level === "SISWA") {
+		} else if (level === 'SISWA') {
 			if (!nis) {
-				masalah.missingNis = true;		
-			}
-	
-			if (!kelas) {
-				masalah.missingKelas = true;		
-			}
-	
-			if (!jurusan) {
-				masalah.missingJurusan = true;		
+				masalah.missingNis = true;
 			}
 
-			if (!nama || !username || !level || !nis || !kelas || !jurusan || usernameCheck || password != kpassword) {		
-				return fail(400, masalah)
+			if (!kelas) {
+				masalah.missingKelas = true;
+			}
+
+			if (!jurusan) {
+				masalah.missingJurusan = true;
+			}
+
+			if (
+				!nama ||
+				!username ||
+				!level ||
+				!nis ||
+				!kelas ||
+				!jurusan ||
+				usernameCheck ||
+				password != kpassword
+			) {
+				return fail(400, masalah);
 			}
 		}
 
 		try {
 			await auth.createUser({
 				primaryKey: {
-					providerId: "username",
+					providerId: 'username',
 					providerUserId: username,
 					password
 				},
@@ -99,16 +107,16 @@ export const actions: Actions = {
 					kelas,
 					jurusan
 				}
-			})
+			});
 		} catch (error) {
 			console.error(error);
 			if (error instanceof LuciaError) {
 				const message = error.message;
 				console.error(message);
 			}
-			return fail(400, {message: "Gagal membuat akun"})
+			return fail(400, { message: 'Gagal membuat akun' });
 		}
 
-		throw redirect(302, '/users')
-    }
+		throw redirect(302, '/users');
+	}
 };

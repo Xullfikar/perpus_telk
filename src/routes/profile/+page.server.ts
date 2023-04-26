@@ -1,7 +1,7 @@
-import { fail, redirect } from "@sveltejs/kit";
-import type { Actions, PageServerLoad } from "./$types.js";
-import { auth } from "$lib/server/lucia.js";
-import { LuciaError } from "lucia-auth";
+import { fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types.js';
+import { auth } from '$lib/server/lucia.js';
+import { LuciaError } from 'lucia-auth';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user, session } = await locals.validateUser();
@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			pinjamanWait: await prisma.peminjaman.findMany({
 				where: {
 					peminjamId: user.userId,
-					status: "wait"
+					status: 'wait'
 				},
 				include: {
 					buku: {
@@ -33,7 +33,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			pinjamanReady: await prisma.peminjaman.findMany({
 				where: {
 					peminjamId: user.userId,
-					status: "ready",
+					status: 'ready'
 				},
 				include: {
 					buku: {
@@ -47,7 +47,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			pinjamanBorrowed: await prisma.peminjaman.findMany({
 				where: {
 					peminjamId: user.userId,
-					status: "borrowed",
+					status: 'borrowed'
 				},
 				include: {
 					buku: {
@@ -61,7 +61,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			pinjamanReturned: await prisma.peminjaman.findMany({
 				where: {
 					peminjamId: user.userId,
-					status: "returned",
+					status: 'returned'
 				},
 				include: {
 					buku: {
@@ -72,7 +72,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 					}
 				}
 			})
-		}
+		};
 	} catch (error) {
 		console.error(error);
 	}
@@ -81,26 +81,26 @@ export const load: PageServerLoad = async ({ locals }) => {
 export const actions: Actions = {
 	updatePassword: async ({ request }) => {
 		const { username, password, Kpassword } = Object.fromEntries(await request.formData()) as {
-			username: string,
-			password: string,
-			Kpassword: string
-		}
+			username: string;
+			password: string;
+			Kpassword: string;
+		};
 
 		if (password != Kpassword) {
-			return fail(400, { incorrect: true })
+			return fail(400, { incorrect: true });
 		}
 
 		try {
-			await auth.updateKeyPassword("username", username, password);
+			await auth.updateKeyPassword('username', username, password);
 		} catch (error) {
 			console.error(error);
 			if (error instanceof LuciaError) {
 				const message = error.message;
 				console.error(message);
 			}
-			return fail(400, { message: "Gagal mengubah password" })
+			return fail(400, { message: 'Gagal mengubah password' });
 		}
 
-		throw redirect(302, "/profile");
+		throw redirect(302, '/profile');
 	}
 };

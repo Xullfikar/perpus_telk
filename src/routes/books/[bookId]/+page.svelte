@@ -86,8 +86,10 @@
 
 	// Persediaan
 	function lengthUsed(stok: number, id: any) {
-		const stokUseds = stokUsed.map(item => Object.values(item)).reduce((acc, val) => acc.concat(val), []);
-		const hasil = stokUseds.filter(item => item === id).length;
+		const stokUseds = stokUsed
+			.map((item) => Object.values(item))
+			.reduce((acc, val) => acc.concat(val), []);
+		const hasil = stokUseds.filter((item) => item === id).length;
 		const tersedia = stok - hasil;
 		return tersedia;
 	}
@@ -143,7 +145,9 @@
 						<Badge large color="red"><h1 class="text-xl">Kosong</h1></Badge>
 					{:else}
 						<Badge large color="green"
-							><h1 class="text-xl">Tersedia: <span class="font-semibold"> {lengthUsed(book.stok, book.id)}</span></h1>
+							><h1 class="text-xl">
+								Tersedia: <span class="font-semibold"> {lengthUsed(book.stok, book.id)}</span>
+							</h1>
 						</Badge>
 					{/if}
 				</div>
@@ -159,8 +163,12 @@
 						</form>
 					</div>
 				{:else if userDetail.level === 'SISWA'}
-					<Button disabled={lengthUsed(book.stok, book.id) < 1 ? true : false} shadow="pink" gradient color="purpleToPink" on:click={() => (pinjamModal = true)}
-						>Pinjam Buku</Button
+					<Button
+						disabled={lengthUsed(book.stok, book.id) < 1 ? true : false}
+						shadow="pink"
+						gradient
+						color="purpleToPink"
+						on:click={() => (pinjamModal = true)}>Pinjam Buku</Button
 					>
 				{/if}
 			</div>
@@ -346,7 +354,13 @@
 			</ButtonGroup>
 		</div>
 		<div class="text-center mt-5">
-			<Button disabled={lengthUsed(book.stok, book.id) < 1 ? true : false} type="submit" gradient color="purpleToPink" class="mr-2">Pinjam</Button>
+			<Button
+				disabled={lengthUsed(book.stok, book.id) < 1 ? true : false}
+				type="submit"
+				gradient
+				color="purpleToPink"
+				class="mr-2">Pinjam</Button
+			>
 		</div>
 	</form>
 </Modal>

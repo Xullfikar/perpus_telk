@@ -349,7 +349,13 @@
 				on:change={(e) => onFileSelected(e)}
 				type="file"
 			/>
-			<Input type="text" name="gambar" value={avatar ? avatar : book.gambar} style="display: none" readonly />
+			<Input
+				type="text"
+				name="gambar"
+				value={avatar ? avatar : book.gambar}
+				style="display: none"
+				readonly
+			/>
 			<Helper class="text-sm mt-2 text-red-800 dark:text-red-800"
 				>Tidak Wajib Diisi, Max 300kb*</Helper
 			>
