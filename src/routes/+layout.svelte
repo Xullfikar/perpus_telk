@@ -15,7 +15,6 @@
 	import CloseButton from 'flowbite-svelte/CloseButton.svelte';
 	import { Avatar } from 'flowbite-svelte';
 	import Dropdown from 'flowbite-svelte/Dropdown.svelte';
-	import DropdownHeader from 'flowbite-svelte/DropdownHeader.svelte';
 	import DropdownItem from 'flowbite-svelte/DropdownItem.svelte';
 	import DropdownDivider from 'flowbite-svelte/DropdownDivider.svelte';
 	import Button from 'flowbite-svelte/Button.svelte';
@@ -76,7 +75,12 @@
 {#if activeUrl === 'login'}
 	<slot />
 {:else}
-	<Navbar let:hidden let:toggle color="primary">
+	<Navbar
+		let:hidden
+		let:toggle
+		color="primary"
+		navClass="fixed top-0 left-0 w-full z-10 py-2 shadow-lg dark:shadow-none"
+	>
 		<NavHamburger on:click={toggleDrawer} btnClass="ml-3 lg:hidden" />
 		<NavBrand href="/" class="lg:ml-64">
 			<span class="self-center whitespace-nowrap text-xl font-semibold dark:text-red-800 pl-4">
@@ -95,13 +99,18 @@
 			<div slot="header" class="px-4 py-2">
 				<span class="block text-sm text-gray-900 dark:text-white"> {userDetail.nama} </span>
 				{#if userDetail.level === 'SISWA'}
-					<span class="block text-sm text-gray-900 dark:text-white"> {userDetail.kelas} </span>
+					{#if userDetail.kelas}
+						<span class="block text-sm text-gray-900 dark:text-white"> {userDetail.kelas} </span>
+					{:else}
+						<span class="block text-sm text-gray-900 dark:text-white"> Belum Ada Kelas </span>
+					{/if}
 					<span class="block truncate text-sm font-medium"> {userDetail.nis} </span>
 				{:else if userDetail.level === 'PETUGAS'}
 					<span class="block truncate text-sm font-medium"> {userDetail.np} </span>
 				{/if}
 			</div>
 			<DropdownItem href="/">Dashboard</DropdownItem>
+			<DropdownItem href="/profile">Profile</DropdownItem>
 			<DropdownItem defaultClass="font-medium py-2 px-4 text-sm"
 				>Mode<DarkMode btnClass={darkmodebtn} /></DropdownItem
 			>
@@ -133,7 +142,7 @@
 						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
 						on:click={toggleSide}
-						active={activeUrl === ``}
+						active={activeUrl === `` || activeUrl === 'books'}
 					>
 						<svelte:fragment slot="icon">
 							<svg
@@ -152,31 +161,59 @@
 							</svg>
 						</svelte:fragment>
 					</SidebarItem>
-					<SidebarItem
-						label="Users"
-						href="/users"
-						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
-						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
-						on:click={toggleSide}
-						active={activeUrl === `users`}
-					>
-						<svelte:fragment slot="icon">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="w-6 h-6"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-								/>
-							</svg>
-						</svelte:fragment>
-					</SidebarItem>
+					{#if userDetail.level === 'ADMIN'}
+						<SidebarItem
+							label="Users"
+							href="/users"
+							aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
+							activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
+							on:click={toggleSide}
+							active={activeUrl === `users`}
+						>
+							<svelte:fragment slot="icon">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="w-6 h-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+									/>
+								</svg>
+							</svelte:fragment>
+						</SidebarItem>
+						<SidebarItem
+							label="Categories"
+							href="/category"
+							aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
+							activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
+							on:click={toggleSide}
+							active={activeUrl === `category`}
+						>
+							<svelte:fragment slot="icon">
+								<svg
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke-width="1.5"
+									stroke="currentColor"
+									class="w-6 h-6"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M6 6.878V6a2.25 2.25 0 012.25-2.25h7.5A2.25 2.25 0 0118 6v.878m-12 0c.235-.083.487-.128.75-.128h10.5c.263 0 .515.045.75.128m-12 0A2.25 2.25 0 004.5 9v.878m13.5-3A2.25 2.25 0 0119.5 9v.878m0 0a2.246 2.246 0 00-.75-.128H5.25c-.263 0-.515.045-.75.128m15 0A2.25 2.25 0 0121 12v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6c0-.98.626-1.813 1.5-2.122"
+									/>
+								</svg>
+							</svelte:fragment>
+						</SidebarItem>
+					{/if}
+					{#if userDetail.level === 'ADMIN' || userDetail.level === 'PETUGAS'}
 					<SidebarItem
 						label="ACC"
 						href="/acc"
@@ -202,8 +239,35 @@
 							</svg>
 						</svelte:fragment>
 					</SidebarItem>
+					{/if}
 				</SidebarGroup>
 				<SidebarGroup border>
+					<SidebarItem
+						label="Profile"
+						href="/profile"
+						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
+						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
+						on:click={toggleSide}
+						active={activeUrl === `profile`}
+					>
+						<svelte:fragment slot="icon">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="w-6 h-6"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+								/>
+							</svg>
+						</svelte:fragment>
+					</SidebarItem>
+					{#if userDetail.level === "ADMIN"}
 					<SidebarItem
 						label="Report"
 						href="/report"
@@ -228,37 +292,14 @@
 							>
 						</svelte:fragment>
 					</SidebarItem>
-					<SidebarItem
-						label="Logout"
-						href="/logout"
-						aClass="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
-						activeClass="flex items-center p-2 text-base font-normal text-gray-900 bg-red-200 dark:bg-red-800 rounded-lg dark:text-white hover:bg-red-100 dark:hover:bg-red-700"
-						on:click={toggleSide}
-					>
-						<svelte:fragment slot="icon">
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke-width="1.5"
-								stroke="currentColor"
-								class="w-6 h-6"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"
-								/>
-							</svg>
-						</svelte:fragment>
-					</SidebarItem>
+					{/if}
 				</SidebarGroup>
 			</SidebarWrapper>
 		</Sidebar>
 	</Drawer>
 
 	<div class="flex px-4 mx-auto w-full">
-		<main class="lg:ml-72 w-full mx-auto">
+		<main class="lg:ml-64 w-full mx-auto mt-16">
 			<slot />
 		</main>
 	</div>

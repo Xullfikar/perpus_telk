@@ -10,6 +10,8 @@
 	import Label from 'flowbite-svelte/Label.svelte';
 	import Alert from 'flowbite-svelte/Alert.svelte';
 	import Breadcrumb from 'flowbite-svelte/Breadcrumb.svelte';
+	import Avatar from 'flowbite-svelte/Avatar.svelte';
+	import myImage from '../../../notImage.png';
 	let slevel: string;
 	let skelas: any;
 	let sjurusan: any;
@@ -37,8 +39,12 @@
 		{ value: 'DBK', name: 'Digital Bisnis dan Keparawisataan' }
 	];
 
-	import type { ActionData } from './$types.d.ts';
+	import type { ActionData, PageData } from './$types.d.ts';
 	export let form: ActionData;
+	export let data: PageData;
+
+	//@ts-ignore
+	$: ({ userDetail, userLevelCheck } = data);
 
 	if (form !== null) {
 		notresolve = true;
@@ -56,30 +62,54 @@
 </script>
 
 <Breadcrumb class="mb-4 mt-4">
-	<BreadcrumbItem href="/users" home>
-		<svelte:fragment slot="icon">
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke-width="1.5"
-				stroke="currentColor"
-				class="w-4 h-4 mr-2"
-			>
-				<path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-				/>
-			</svg>
-		</svelte:fragment>
-		Users
-	</BreadcrumbItem>
-	<BreadcrumbItem>Tambah Pengguna</BreadcrumbItem>
-	<!-- <BreadcrumbItem href="/">Settings</BreadcrumbItem> -->
+	{#if userLevelCheck.level === 'ADMIN'}
+		<BreadcrumbItem href="/users" home>
+			<svelte:fragment slot="icon">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-4 h-4 mr-2"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
+					/>
+				</svg>
+			</svelte:fragment>
+			Users
+		</BreadcrumbItem>
+		<BreadcrumbItem>Ubah Pengguna</BreadcrumbItem>
+		<BreadcrumbItem>{userDetail.nama}</BreadcrumbItem>
+	{:else if userLevelCheck.level === 'SISWA'}
+		<BreadcrumbItem href="/profile" home>
+			<svelte:fragment slot="icon">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					stroke-width="1.5"
+					stroke="currentColor"
+					class="w-4 h-4 mr-2"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+					/>
+				</svg>
+			</svelte:fragment>
+			Profile
+		</BreadcrumbItem>
+		<BreadcrumbItem>Ubah Profil</BreadcrumbItem>
+		<BreadcrumbItem>{userDetail.nama}</BreadcrumbItem>
+	{/if}
 </Breadcrumb>
 
-<p class="text-xl md:text-3xl font-semibold dark:text-white mb-4">Tambah Pengguna</p>
+<p class="text-xl md:text-3xl font-semibold dark:text-white mb-4">Ubah {userDetail.nama}</p>
 
 <form action="" method="post">
 	<div
@@ -295,7 +325,12 @@
 
 		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label for="nama" class="block mb-2 text-red-800 dark:text-red-800">Nama</Label>
-			<Input id="nama" name="nama" value={form?.nama} placeholder="Masukkan Nama Lengkap" />
+			<Input
+				id="nama"
+				name="nama"
+				value={form?.nama ? form?.nama : userDetail.nama}
+				placeholder="Masukkan Nama Lengkap"
+			/>
 		</div>
 		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label for="telepon/wa" class="block mb-2 text-red-800 dark:text-red-800"
@@ -305,13 +340,18 @@
 				id="telepon/wa"
 				type="number"
 				name="wa"
-				value={form?.wa}
+				value={form?.wa ? form?.wa : userDetail.wa}
 				placeholder="Masukkan Nomor Whatsapp"
 			/>
 			<Helper class="text-sm mt-2 text-red-800 dark:text-red-800">Tidak Wajib Diisi*</Helper>
 		</div>
 		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label class="pb-2 text-red-800 dark:text-red-800">Upload Foto</Label>
+			{#if !userDetail.foto}
+				<Avatar size="lg" src={myImage} class="mb-2" />
+			{:else}
+				<Avatar size="lg" src={userDetail.foto} class="mb-2" />
+			{/if}
 			<Fileupload
 				name="image"
 				accept="image/png, image/jpeg"
@@ -319,7 +359,13 @@
 				on:change={(e) => onFileSelected(e)}
 				type="file"
 			/>
-			<Input type="text" name="foto" value={avatar} style="display: none" readonly />
+			<Input
+				type="text"
+				name="foto"
+				value={avatar ? avatar : userDetail.foto}
+				style="display: none"
+				readonly
+			/>
 			<Helper class="text-sm mt-2 text-red-800 dark:text-red-800"
 				>Tidak Wajib Diisi, Max 300kb*</Helper
 			>
@@ -334,7 +380,9 @@
 					placeholder="PIlih Role"
 				>
 					{#if form?.level}
-						<option selected value={form?.level}>{form?.level}></option>
+						<option selected hidden value={form?.level}>{form?.level}</option>
+					{:else if userDetail.level}
+						<option selected hidden value={userDetail.level}>{userDetail.level}</option>
 					{/if}
 
 					{#each level as { value, name }}
@@ -364,74 +412,30 @@
 					id="website-admin"
 					type="text"
 					name="username"
-					value={form?.username}
+					value={form?.username ? form?.username : userDetail.username}
 					placeholder="username"
-				/>
-			</ButtonGroup>
-		</div>
-		<div class="mb-3 col-span-2 md:col-span-1">
-			<Label for="website-admin" class="block mb-2 text-red-800 dark:text-red-800">Password</Label>
-			<ButtonGroup class="w-full">
-				<InputAddon>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="currentColor"
-						viewBox="0 0 24 24"
-						class="w-6 h-6"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"
-						/>
-					</svg>
-				</InputAddon>
-				<Input
-					id="website-admin"
-					type="password"
-					name="password"
-					value={form?.password}
-					placeholder="password"
-				/>
-			</ButtonGroup>
-		</div>
-		<div class="mb-3 col-span-2 md:col-span-1">
-			<Label for="website-admin" class="block mb-2 text-red-800 dark:text-red-800"
-				>Konfirmasi Password</Label
-			>
-			<ButtonGroup class="w-full">
-				<InputAddon>
-					<svg
-						xmlns="http://www.w3.org/2000/svg"
-						fill="currentColor"
-						viewBox="0 0 24 24"
-						class="w-6 h-6"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"
-						/>
-					</svg>
-				</InputAddon>
-				<Input
-					id="website-admin"
-					type="password"
-					name="kpassword"
-					value={form?.kpassword}
-					placeholder="password"
 				/>
 			</ButtonGroup>
 		</div>
 		{#if slevel === 'PETUGAS'}
 			<div class="col-span-2 mb-3">
 				<Label for="np" class="block mb-2 text-red-800 dark:text-red-800">Nomor Pegawai</Label>
-				<Input id="np" name="np" value={form?.np} placeholder="Masukkan Nomor Pegawai" />
+				<Input
+					id="np"
+					name="np"
+					value={form?.np ? form?.np : userDetail.np}
+					placeholder="Masukkan Nomor Pegawai"
+				/>
 			</div>
 		{:else if slevel === 'SISWA'}
 			<div class="col-span-2 mb-3">
 				<Label for="nis" class="block mb-2 text-red-800 dark:text-red-800">NIS</Label>
-				<Input id="nis" name="nis" value={form?.nis} placeholder="Masukkan Nomor Induk Siswa" />
+				<Input
+					id="nis"
+					name="nis"
+					value={form?.nis ? form?.nis : userDetail.nis}
+					placeholder="Masukkan Nomor Induk Siswa"
+				/>
 			</div>
 			<div class="mb-3 col-span-2 md:col-span-1">
 				<Label defaultClass="text-w-semibold text-red-800 dark:text-red-800"
@@ -439,9 +443,19 @@
 					<Select
 						name="kelas"
 						class="mt-1 text-red-800 dark:text-red-800"
-						items={kelas}
 						bind:value={skelas}
-					/>
+						placeholder="Pilih Kelas"
+					>
+						{#if form?.kelas}
+							<option selected hidden value={form?.kelas}>{form?.kelas}</option>
+						{:else if userDetail.kelas}
+							<option selected hidden value={userDetail.kelas}>{userDetail.kelas}</option>
+						{/if}
+
+						{#each kelas as { value, name }}
+							<option {value}>{name}</option>
+						{/each}
+					</Select>
 				</Label>
 			</div>
 			<div class="mb-3 col-span-2 md:col-span-1">
@@ -450,9 +464,19 @@
 					<Select
 						name="jurusan"
 						class="mt-1 text-red-800 dark:text-red-800"
-						items={jurusan}
 						bind:value={sjurusan}
-					/>
+						placeholder="Pilih Jurusan"
+					>
+						{#if form?.jurusan}
+							<option selected hidden value={form?.jurusan}>{form?.jurusan}</option>
+						{:else if userDetail.jurusan}
+							<option selected hidden value={userDetail.jurusan}>{userDetail.jurusan}</option>
+						{/if}
+
+						{#each jurusan as { value, name }}
+							<option {value}>{name}</option>
+						{/each}
+					</Select>
 				</Label>
 			</div>
 		{:else}
@@ -483,7 +507,7 @@
 				color="red"
 				style="width: 100%;"
 				type="submit"
-				disabled={notresolve}>DAFTAR</Button
+				disabled={notresolve}>PERBARUI</Button
 			>
 		</div>
 	</div>

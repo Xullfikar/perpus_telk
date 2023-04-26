@@ -31,20 +31,68 @@ model session {
 }
 
 model user {
-  id       String        @id @unique
-  nama     String        @db.VarChar(100)
-  foto     String?
-  username String        @unique @db.VarChar(100)
-  wa       String?        @db.VarChar(20)
-  level    user_level    @default(SISWA)
-  np       String?       @db.VarChar(10)
-  nis      String?       @db.VarChar(10)
-  kelas    user_kelas?
-  jurusan  user_jurusan?
-  key      key[]
-  session  session[]
+  id                          String        @id
+  nama                        String        @db.VarChar(100)
+  foto                        String?       @db.Text
+  username                    String        @unique @db.VarChar(100)
+  wa                          String?       @db.VarChar(20)
+  level                       user_level    @default(SISWA)
+  np                          String?       @db.VarChar(10)
+  nis                         String?       @db.VarChar(10)
+  kelas                       user_kelas?
+  jurusan                     user_jurusan?
+  key                         key[]
+  peminjaman                  peminjaman[]
+  peminjaman_penanggung_jawab peminjaman[]  @relation("penanggungJawab")
+  session                     session[]
 
   @@map("user")
+}
+
+model buku {
+  id            Int          @id @default(autoincrement())
+  gambar        String?      @db.Text
+  judulBuku     String       @db.VarChar(255)
+  penulis       String       @db.VarChar(255)
+  penerbit      String       @db.VarChar(255)
+  tahunTerbit   DateTime     @db.Date
+  isbn          Int
+  idKategori    Int?
+  jumlahHalaman Int
+  sinopsis      String?      @db.Text
+  stok          Int
+  lokasi        String       @db.VarChar(255)
+  category      category?    @relation(fields: [idKategori], references: [id])
+  peminjaman    peminjaman[]
+
+  @@index([idKategori], map: "buku_idKategori_fkey")
+}
+
+model category {
+  id       Int    @id @default(autoincrement())
+  kategori String @db.VarChar(255)
+  buku     buku[]
+}
+
+model peminjaman {
+  id                  Int               @id @default(autoincrement())
+  bookId              Int
+  peminjamId          String
+  tanggalPeminjaman   DateTime          @db.Date
+  tanggalTenggat      DateTime?         @db.Date
+  tanggalPengembalian DateTime?         @db.Date
+  catatan             String?           @db.Text
+  status              peminjaman_status @default(wait)
+  penanggungJawabId   String?
+  kodeBuku            String?
+  updatedAt           DateTime          @default(now()) @db.Timestamp(0)
+  buku                buku              @relation(fields: [bookId], references: [id])
+  peminjam            user              @relation(fields: [peminjamId], references: [id])
+  penanggungJawab     user?             @relation("penanggungJawab", fields: [penanggungJawabId], references: [id])
+
+  @@index([bookId], map: "peminjaman_bookId_fkey")
+  @@index([peminjamId], map: "peminjaman_peminjamId_fkey")
+  @@index([penanggungJawabId], map: "peminjaman_penanggungJawabId_fkey")
 }
 
 enum user_kelas {
@@ -65,4 +113,12 @@ enum user_jurusan {
   TJA
   TEL
   DBK
+}
+
+enum peminjaman_status {
+  wait
+  ready
+  cancel
+  borrowed
+  returned
 }

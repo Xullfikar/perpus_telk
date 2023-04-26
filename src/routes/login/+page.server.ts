@@ -2,9 +2,9 @@ import { auth } from "$lib/server/lucia.js";
 import { fail, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types.js";
 
-export const load: PageServerLoad = async ({locals}) => {
+export const load: PageServerLoad = async ({ locals }) => {
     const session = await locals.validate()
-    if(session) {
+    if (session) {
         throw redirect(302, "/")
     }
 };
@@ -21,7 +21,7 @@ export const actions: Actions = {
             }
         })
 
-        if(!usernameCheck) {
+        if (!usernameCheck) {
             return fail(400, { username, noUsername: true })
         }
 
@@ -34,6 +34,6 @@ export const actions: Actions = {
             return fail(400, { missingLogin: true, username })
         }
 
-        throw redirect(302, "/dashboard")
+        throw redirect(302, "/")
     }
 };

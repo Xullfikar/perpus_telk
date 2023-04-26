@@ -1,26 +1,37 @@
-import { auth } from '$lib/server/lucia.js';
-import { redirect, fail } from '@sveltejs/kit';
-import { LuciaError } from 'lucia-auth';
-import type { Actions, PageServerLoad } from './$types.js';
+import { fail, redirect } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types.js";
+import { auth } from "$lib/server/lucia.js";
+import { LuciaError } from "lucia-auth";
 
-export const load: PageServerLoad = async ({ locals }) => {
-	const session = await locals.validate();
+export const load: PageServerLoad = async ({params, locals}) => {
+    const {user, session} = await locals.validateUser();
 	if (!session) {
 		throw redirect(302, '/login');
 	}
+
+    return {
+        userDetail: await prisma.user.findUnique({
+            where: {
+                id: params.userId
+            }
+        }),
+		userLevelCheck: await prisma.user.findUnique({
+			where: {
+				id: user.userId
+			}	
+		})
+    }
 };
 
 export const actions: Actions = {
-    default: async ({ request }) => {
-        const { nama, foto, username, password, kpassword, wa, level, np, nis, kelas, jurusan } = Object.fromEntries(
+    default: async ({ request, params }) => {
+        const { nama, foto, username, wa, level, np, nis, kelas, jurusan } = Object.fromEntries(
 			await request.formData()
 		) as Record<string, string>;
 
 		let masalah = {
 			nama, 
 			username, 
-			password, 
-			kpassword, 
 			wa, 
 			level, 
 			np, 
@@ -47,20 +58,21 @@ export const actions: Actions = {
             }
         });
 
-		if(usernameCheck) {
-			masalah.usernameReady = true;		
-        }
-
-		if(password != kpassword) {
-			masalah.incorrect = true;		
-        }
+		const usernameCheckUpdate = () => {
+			if(usernameCheck) {
+				if(usernameCheck.id != params.userId) {
+					masalah.usernameReady = true;	
+					return true;	
+				}
+			}
+		}
 
 		if (level === "PETUGAS") {
 			if (!np) {
 				masalah.missingNp = true;		
 			}
 
-			if (!nama || !username || !level || !np || usernameCheck || password != kpassword) {		
+			if (!nama || !username || !level || !np || usernameCheckUpdate()) {		
 				return fail(400, masalah)
 			}
 		} else if (level === "SISWA") {
@@ -76,19 +88,18 @@ export const actions: Actions = {
 				masalah.missingJurusan = true;		
 			}
 
-			if (!nama || !username || !level || !nis || !kelas || !jurusan || usernameCheck || password != kpassword) {		
+			if (!nama || !username || !level || !nis || !kelas || !jurusan || usernameCheckUpdate()) {
+				console.log(masalah);
 				return fail(400, masalah)
 			}
 		}
 
+		console.log(foto);
+
 		try {
-			await auth.createUser({
-				primaryKey: {
-					providerId: "username",
-					providerUserId: username,
-					password
-				},
-				attributes: {
+			await auth.updateUserAttributes(
+				params.userId,
+				{
 					nama,
 					username,
 					foto,
@@ -99,7 +110,7 @@ export const actions: Actions = {
 					kelas,
 					jurusan
 				}
-			})
+			); 
 		} catch (error) {
 			console.error(error);
 			if (error instanceof LuciaError) {
