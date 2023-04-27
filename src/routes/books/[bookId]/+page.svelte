@@ -45,6 +45,15 @@
 		}
 	}
 
+	// String Check 
+	function checkDiv(string) {
+  if (string.includes("<div>")) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 	// ReadMore
 	function splitString(str: string) {
 		// Membagi string menggunakan regular expression
@@ -176,10 +185,16 @@
 
 			<h1 class="text-xl font-semibold mb-3 dark:text-white">Deskripsi Buku</h1>
 
+			{#if !book.sinopsis}
+			<p class="text-gray-700 dark:text-gray-400 leading-relaxed mb-3">sinopsis Belum di Update</p>
+			{:else if !checkDiv(book.sinopsis)}
+			<p class="text-gray-700 dark:text-gray-400 leading-relaxed mb-3">{book.sinopsis}</p>
+			{:else}
 			<ReadMore
-				shortText={splitString(book.sinopsis).shortText}
-				longText={splitString(book.sinopsis).longText}
+			shortText={splitString(book.sinopsis).shortText}
+			longText={splitString(book.sinopsis).longText}
 			/>
+			{/if}
 
 			<Hr class="my-4 mx-auto md:my-8" />
 
