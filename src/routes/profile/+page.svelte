@@ -123,6 +123,10 @@
 					{/if}
 				{:else if userDetail.level === 'PETUGAS'}
 					<p class="text-md font-medium text-gray-900 dark:text-white">NP</p>
+					<p class="text-md text-gray-500 dark:text-gray-400">
+						<span class="text-md font-medium text-gray-900 dark:text-white">:</span>
+						{userDetail.np}
+					</p>
 				{/if}
 			</div>
 		</div>
@@ -197,8 +201,6 @@
 										{userDetail.jurusan}
 									</p>
 								{/if}
-							{:else if userDetail.level === 'PETUGAS'}
-								<p class="text-md font-medium text-gray-900 dark:text-white">NP</p>
 							{/if}
 						</div>
 					</div>
@@ -207,7 +209,7 @@
 		</div>
 		<div class="md:w-2/3">
 			<!-- Section 2 -->
-			<div class="md:pl-8">
+			<div class="md:pl-8 mb-5">
 				<div class="flex justify-between items-center mb-5 mt-5 md:mt-0">
 					<h1 class="text-2xl font-bold dark:text-white">List Buku Pinjaman</h1>
 					<div class="w-1/3">
