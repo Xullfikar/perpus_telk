@@ -55,7 +55,7 @@
 	// @ts-ignore
 	const searchBook = data.books.map((book: any) => ({
 		...book,
-		searchTerms: `${book.judulBuku} ${book.category ? book.category.kategori : ''} ${book.stok} ${
+		searchTerms: `${book.judulBuku} ${book.category ? book.category.kategori : ''} ${
 			book.penulis
 		}`
 	}));

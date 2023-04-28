@@ -45,45 +45,42 @@
 		}
 	}
 
-	// String Check 
+	// String Check
 	function checkDiv(string) {
-  if (string.includes("<div>")) {
-    return true;
-  } else {
-    return false;
-  }
-}
+		if (string.includes('<div>')) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	// ReadMore
 	function splitString(str: string) {
-		// Membagi string menggunakan regular expression
-		let arr = str.split(/(<div>.*?<\/div>)/g);
+		// Mencari posisi pertama dari <br>
+		let firstBr = str.indexOf('<br>');
 
-		// Menginisialisasi variabel untuk menyimpan hasil pembagian
-		let shortText = '';
-		let longText = '';
+		// Mengecek apakah <br> ditemukan
+		if (firstBr !== -1) {
+			// Memecah string menjadi dua bagian
+			let part1 = str.substring(0, firstBr);
+			let part2 = str.substring(firstBr + 4);
 
-		// Memasukkan hasil pembagian ke dalam variabel masing-masing
-		for (let i = 0; i < arr.length; i++) {
-			if (arr[i].startsWith('<div>') && arr[i].endsWith('</div>')) {
-				if (shortText === '') {
-					shortText = arr[i];
-				} else if (longText === '') {
-					longText = arr[i];
-				} else {
-					longText += arr[i];
-				}
-			} else if (longText === '') {
-				shortText += arr[i];
-			} else {
-				longText += arr[i];
-			}
+			// Menghapus whitespace di awal dan akhir string
+			part1 = part1.trim();
+			part2 = part2.trim();
+
+			// Mengembalikan hasil pemecahan
+			return {
+				shortText: part1,
+				longText: part2
+			};
+		} else {
+			// Jika <br> tidak ditemukan, mengembalikan string asli sebagai part1 dan string kosong sebagai part2
+			return {
+				shortText: str.trim(),
+				longText: ''
+			};
 		}
-
-		return {
-			shortText: shortText,
-			longText: longText
-		};
 	}
 
 	// fitur peminjaman
@@ -186,14 +183,16 @@
 			<h1 class="text-xl font-semibold mb-3 dark:text-white">Deskripsi Buku</h1>
 
 			{#if !book.sinopsis}
-			<p class="text-gray-700 dark:text-gray-400 leading-relaxed mb-3">sinopsis Belum di Update</p>
+				<p class="text-gray-700 dark:text-gray-400 leading-relaxed mb-3">
+					sinopsis Belum di Update
+				</p>
 			{:else if !checkDiv(book.sinopsis)}
-			<p class="text-gray-700 dark:text-gray-400 leading-relaxed mb-3">{book.sinopsis}</p>
+				<p class="text-gray-700 dark:text-gray-400 leading-relaxed mb-3">{book.sinopsis}</p>
 			{:else}
-			<ReadMore
-			shortText={splitString(book.sinopsis).shortText}
-			longText={splitString(book.sinopsis).longText}
-			/>
+				<ReadMore
+					shortText={splitString(book.sinopsis).shortText}
+					longText={splitString(book.sinopsis).longText}
+				/>
 			{/if}
 
 			<Hr class="my-4 mx-auto md:my-8" />
