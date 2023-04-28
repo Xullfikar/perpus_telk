@@ -93,7 +93,7 @@
 			{:else}
 				<Avatar src={userDetail.foto} class="mr-2" />
 			{/if}
-			{userDetail.nama}
+			<!-- {userDetail.nama} -->
 		</Button>
 		<Dropdown inline triggeredBy="#avatar_with_name">
 			<div slot="header" class="px-4 py-2">
