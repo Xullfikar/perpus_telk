@@ -89,9 +89,9 @@
 		</NavBrand>
 		<Button pill color="light" id="avatar_with_name" class="!p-1">
 			{#if !userDetail.foto}
-				<Avatar src={myImage} class="mr-2" />
+				<Avatar src={myImage} />
 			{:else}
-				<Avatar src={userDetail.foto} class="mr-2" />
+				<Avatar src={userDetail.foto} />
 			{/if}
 			<!-- {userDetail.nama} -->
 		</Button>
