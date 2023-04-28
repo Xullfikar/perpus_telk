@@ -87,7 +87,7 @@
 				Perpus-Telk
 			</span>
 		</NavBrand>
-		<Button pill color="light" id="avatar_with_name" class="!p-1">
+		<Button pill color="light" id="avatar_with_name" class="!p-1 mr-5 md:mr-0">
 			{#if !userDetail.foto}
 				<Avatar src={myImage} />
 			{:else}
