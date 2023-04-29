@@ -314,9 +314,12 @@
 		</div>
 		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label class="pb-2 text-red-800 dark:text-red-800">Upload Gambar Cover</Label>
+			{#if avatar}
+			<img src={avatar} alt="" class="mb-2" width="120" />
+			{/if}
 			<Fileupload
 				name="image"
-				accept="image/png, image/jpeg"
+				accept="image/jpg, image/png"
 				bind:files
 				on:change={(e) => onFileSelected(e)}
 				type="file"
@@ -365,7 +368,7 @@
 			>
 		</div>
 		<div class="mb-3 col-span-2 md:col-span-1">
-			<Label defaultClass="text-w-semibold text-red-800 dark:text-red-800"
+			<Label defaultClass="font-medium text-sm text-red-800 dark:text-red-800"
 				>Pilih Kategori
 				<Select
 					name="idKategori"

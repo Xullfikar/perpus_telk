@@ -1,6 +1,9 @@
 import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types.js';
 
+// export const ssr = false;
+export const prerender = 'auto';
+
 export const load: PageServerLoad = async ({ locals }) => {
 	const { user, session } = await locals.validateUser();
 	if (!session) {

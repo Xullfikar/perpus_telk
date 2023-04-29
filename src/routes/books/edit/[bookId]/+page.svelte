@@ -344,7 +344,7 @@
 			{/if}
 			<Fileupload
 				name="image"
-				accept="image/png, image/jpeg"
+				accept="image/jpeg, image/png"
 				bind:files
 				on:change={(e) => onFileSelected(e)}
 				type="file"

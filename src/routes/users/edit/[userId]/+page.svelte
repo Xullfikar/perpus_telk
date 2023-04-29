@@ -21,6 +21,7 @@
 	// let selected: any;
 
 	let level = [
+		{ value: 'ADMIN', name: 'ADMIN' },
 		{ value: 'PETUGAS', name: 'PETUGAS' },
 		{ value: 'SISWA', name: 'SISWA' }
 	];
@@ -370,7 +371,7 @@
 				>Tidak Wajib Diisi, Max 300kb*</Helper
 			>
 		</div>
-		<div class="mb-3 col-span-2 md:col-span-1">
+		<div class="mb-3 col-span-2 md:col-span-1" hidden={userLevelCheck.level != "ADMIN" ? true : false}>
 			<Label defaultClass="text-w-semibold text-red-800 dark:text-red-800"
 				>Pilih Role
 				<Select
