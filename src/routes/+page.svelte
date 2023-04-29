@@ -55,9 +55,7 @@
 	// @ts-ignore
 	const searchBook = data.books.map((book: any) => ({
 		...book,
-		searchTerms: `${book.judulBuku} ${book.category ? book.category.kategori : ''} ${
-			book.penulis
-		}`
+		searchTerms: `${book.judulBuku} ${book.category ? book.category.kategori : ''} ${book.penulis}`
 	}));
 
 	const searchStore = createSearchStore(searchBook);

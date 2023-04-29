@@ -315,7 +315,7 @@
 		<div class="mb-3 col-span-2 md:col-span-1">
 			<Label class="pb-2 text-red-800 dark:text-red-800">Upload Gambar Cover</Label>
 			{#if avatar}
-			<img src={avatar} alt="" class="mb-2" width="120" />
+				<img src={avatar} alt="" class="mb-2" width="120" />
 			{/if}
 			<Fileupload
 				name="image"
